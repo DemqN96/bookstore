@@ -1,0 +1,32 @@
+version: '3.8'
+
+services:
+  backend-rds:
+    image: 149591431224.dkr.ecr.eu-north-1.amazonaws.com/backend-rds-book
+    container_name: backend-rds
+    environment:
+      DB_HOST: database-bookstore.c584egy6cwej.eu-north-1.rds.amazonaws.com
+      DB_PORT: 5432
+      DB_NAME: mydb
+      DB_USER: myuser
+      DB_PASSWORD: mypassword
+    ports:
+      - "8000:8000"
+
+  backend-redis:
+    image: 149591431224.dkr.ecr.eu-north-1.amazonaws.com/backend-redis-book
+    container_name: backend-redis
+    environment:
+      REDIS_HOST: clustercfg.redis-bookstore.uquncs.eun1.cache.amazonaws.com
+      REDIS_PORT: 6379
+    ports:
+      - "8001:8001"
+
+  frontend:
+    image: 149591431224.dkr.ecr.eu-north-1.amazonaws.com/frontend-book
+    container_name: frontend
+    ports:
+      - "3000:3000"
+
+volumes:
+  pgdata:
