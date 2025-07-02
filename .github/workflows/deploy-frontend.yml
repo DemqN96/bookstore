@@ -23,8 +23,8 @@ jobs:
     - name: Login to ECR
       uses: aws-actions/amazon-ecr-login@v1
 
-    # - name: Build and push frontend image
-    #   run: |
-    #     IMAGE=149591431224.dkr.ecr.eu-north-1.amazonaws.com/frontend-book
-    #     docker build -t $IMAGE ./frontend
-    #     docker push $IMAGE
+    - name: Build and push frontend image
+      run: |
+        IMAGE=149591431224.dkr.ecr.eu-north-1.amazonaws.com/frontend-book
+        docker build -t $IMAGE ./frontend
+        docker push $IMAGE
