@@ -6,4 +6,4 @@ urlpatterns = [
     path('test_rds/', views.test_rds, name='test_rds'),
     path('test_redis/', views.test_redis, name='test_redis'),
 ]
-  
+    
