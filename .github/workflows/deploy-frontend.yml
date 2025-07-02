@@ -37,6 +37,10 @@ jobs:
         script: |
           docker stop frontend || true
           docker rm frontend || true
+          aws ecr get-login-password --region eu-north-1 | docker login --username AWS --password-stdin 149591431224.dkr.ecr.eu-north-1.amazonaws.com
+
           docker pull 149591431224.dkr.ecr.eu-north-1.amazonaws.com/frontend-book
-          docker run -d --name frontend -p 80:80 149591431224.dkr.ecr.eu-north-1.amazonaws.com/frontend-book
+        
+          docker run -d --name frontend --restart unless-stopped -p 80:80 149591431224.dkr.ecr.eu-north-1.amazonaws.com/frontend-book
+
     
