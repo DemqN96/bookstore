@@ -35,3 +35,4 @@ def test_redis(request):
             error_data = e.response.json()
             return JsonResponse(error_data, status=500)
         return JsonResponse({'error': 'Request failed', 'details': str(e)}, status=500)
+  

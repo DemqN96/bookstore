@@ -3,7 +3,7 @@ name: Deploy backend-rds
 on:
   push:
     paths:
-      - 'backend/**'
+      - 'backend_rds/**'
       - '.github/workflows/backend-rds.yml'
 
 jobs:
