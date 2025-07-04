@@ -37,25 +37,25 @@ jobs:
         username: ${{ vars.EC2_USER }}
         key: ${{ secrets.SSH_KEY }}
         script: |
-          echo " Зупиняємо і видаляємо старий контейнер, якщо існує"
+          echo "🔧 Зупиняємо і видаляємо старий контейнер, якщо існує"
           docker stop backend_rds || true
           docker rm backend_rds || true
 
           echo "🔍 Перевіряємо, чи порт 8000 вже зайнятий"
           CONTAINER_ID=$(docker ps -q --filter "publish=8000")
           if [ ! -z "$CONTAINER_ID" ]; then
-            echo " Порт 8000 зайнятий. Зупиняємо контейнер $CONTAINER_ID"
+            echo "⚠️ Порт 8000 зайнятий. Зупиняємо контейнер $CONTAINER_ID"
             docker stop $CONTAINER_ID
             docker rm $CONTAINER_ID
           fi
 
-          echo " Логін до ECR"
+          echo "🔐 Логін до ECR"
           aws ecr get-login-password --region eu-north-1 | docker login --username AWS --password-stdin 149591431224.dkr.ecr.eu-north-1.amazonaws.com
 
-          echo " Завантажуємо новий образ"
+          echo "⬇️ Завантажуємо новий образ"
           docker pull 149591431224.dkr.ecr.eu-north-1.amazonaws.com/backend-rds-book
 
-          echo " Запускаємо контейнер backend_rds"
+          echo "🚀 Запускаємо контейнер backend_rds"
           docker run -d --name backend_rds -p 8000:8000 \
             -e DB_HOST=database-bookstore.c584egy6cwej.eu-north-1.rds.amazonaws.com \
             -e DB_PORT=5432 \
@@ -63,4 +63,3 @@ jobs:
             -e DB_USER=postgres \
             -e DB_PASSWORD=${{ secrets.DB_PASSWORD }} \
             149591431224.dkr.ecr.eu-north-1.amazonaws.com/backend-rds-book
- 
