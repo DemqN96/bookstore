@@ -59,7 +59,7 @@ jobs:
           docker run -d --name backend_rds -p 8000:8000 \
             -e DB_HOST=database-bookstore.c584egy6cwej.eu-north-1.rds.amazonaws.com \
             -e DB_PORT=5432 \
-            -e DB_NAME=mydb \
+            -e DB_NAME=redis-bookstore \
             -e DB_USER=postgres \
             -e DB_PASSWORD=${{ secrets.DB_PASSWORD }} \
             149591431224.dkr.ecr.eu-north-1.amazonaws.com/backend-rds-book
