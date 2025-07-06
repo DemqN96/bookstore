@@ -26,7 +26,10 @@ services:
     image: 149591431224.dkr.ecr.eu-north-1.amazonaws.com/frontend-book
     container_name: frontend
     ports:
-      - "3000:3000"
+      - "80:80"
+    environment:
+      BACKEND_RDS_URL: backend-rds:8000/test_connection/
+      BACKEND_REDIS_URL: backend-redis:8001/test_connection/
 
 volumes:
   pgdata:
