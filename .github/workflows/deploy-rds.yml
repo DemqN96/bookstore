@@ -44,9 +44,14 @@ jobs:
           echo "⬇️ Завантажуємо новий образ"
           docker pull ${{ vars.AWS_ACCAUNT_ID }}.dkr.ecr.${{ vars.AWS_REGION }}.amazonaws.com/backend-redis-book
 
+          echo "🔍 Перевірка порту 8000"
+          sudo fuser -k 8000/tcp || true
+
+          echo "🛠 Зупиняємо старі сервіси"
+          docker-compose down || true
+
           echo "🧹 Очищаємо старі логи Docker"
           sudo find /var/lib/docker/containers/ -type f -name "*.log" -exec truncate -s 0 {} \;
 
-          echo "🛠 Перезапуск сервісу"
-          docker-compose down
+          echo "🚀 Запускаємо сервіси"
           docker-compose up -d
