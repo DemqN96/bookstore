@@ -18,7 +18,7 @@ jobs:
       with:
         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        aws-region: eu-north-1
+        aws-region: ${{ vars.AWS_REGION }}
 
     - name: Login to ECR
       uses: aws-actions/amazon-ecr-login@v1
@@ -26,7 +26,7 @@ jobs:
     - name: Build and push backend-redis image
       run: |
         IMAGE=149591431224.dkr.ecr.eu-north-1.amazonaws.com/backend-redis-book
-        docker build -t $IMAGE ./backend
+        docker build -t $IMAGE ./backend_redis
         docker push $IMAGE
 
     - name: SSH and deploy backend-redis
@@ -36,5 +36,17 @@ jobs:
         username: ${{ secrets.EC2_USER }}
         key: ${{ secrets.EC2_SSH_KEY }}
         script: |
+          echo "🛑 Зупиняємо старий контейнер, якщо є"
+          docker stop backend-redis || true
+          docker rm backend-redis || true
+
+          echo "🔐 Логін до ECR"
+          aws ecr get-login-password --region eu-north-1 | \
+            docker login --username AWS --password-stdin 149591431224.dkr.ecr.eu-north-1.amazonaws.com
+
+          echo "⬇️ Завантажуємо новий образ"
           docker pull 149591431224.dkr.ecr.eu-north-1.amazonaws.com/backend-redis-book
-          docker restart backend-redis
+
+          echo "🚀 Запускаємо контейнер backend-redis"
+          docker run -d --name backend-redis -p 8001:8001 \
+            149591431224.dkr.ecr.eu-north-1.amazonaws.com/backend-redis-book

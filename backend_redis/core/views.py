@@ -28,3 +28,4 @@ def test_connection(request):
             'error': 'Redis connection failed',
             'details': str(e)
         }, status=500)
+ 
