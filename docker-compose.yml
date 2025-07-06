@@ -5,11 +5,11 @@ services:
     image: 149591431224.dkr.ecr.eu-north-1.amazonaws.com/backend-rds-book
     container_name: backend-rds
     environment:
-      DB_HOST: database-bookstore.c584egy6cwej.eu-north-1.rds.amazonaws.com
+      DB_HOST: database-bookstore1.c584egy6cwej.eu-north-1.rds.amazonaws.com
       DB_PORT: 5432
-      DB_NAME: mydb
-      DB_USER: myuser
-      DB_PASSWORD: mypassword
+      DB_NAME: posgres
+      DB_USER: posgres
+      DB_PASSWORD: Sweets5939!
     ports:
       - "8000:8000"
 
@@ -17,7 +17,7 @@ services:
     image: 149591431224.dkr.ecr.eu-north-1.amazonaws.com/backend-redis-book
     container_name: backend-redis
     environment:
-      REDIS_HOST: clustercfg.redis-bookstore.uquncs.eun1.cache.amazonaws.com
+      REDIS_HOST: redis-bookstore.uquncs.ng.0001.eun1.cache.amazonaws.com
       REDIS_PORT: 6379
     ports:
       - "8001:8001"
