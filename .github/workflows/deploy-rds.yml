@@ -37,29 +37,13 @@ jobs:
         username: ${{ vars.EC2_USER }}
         key: ${{ secrets.SSH_KEY }}
         script: |
-          echo " Зупиняємо і видаляємо старий контейнер "
-          docker stop backend_rds || true
-          docker rm backend_rds || true
-
-          echo " Перевіряємо, чи порт 8000 вже зайнятий"
-          CONTAINER_ID=$(docker ps -q --filter "publish=8000")
-          if [ ! -z "$CONTAINER_ID" ]; then
-            echo "⚠️ Порт 8000 зайнятий. Зупиняємо контейнер $CONTAINER_ID"
-            docker stop $CONTAINER_ID
-            docker rm $CONTAINER_ID
-          fi
-
           echo "🔐 Логін до ECR"
-          aws ecr get-login-password --region ${{ vars.AWS_REGION }} | docker login --username AWS --password-stdin ${{ vars.AWS_ACCAUNT_ID }}.dkr.ecr.${{ vars.AWS_REGION }}.amazonaws.com
+          aws ecr get-login-password --region ${{ vars.AWS_REGION }} | \
+            docker login --username AWS --password-stdin ${{ vars.AWS_ACCAUNT_ID }}.dkr.ecr.${{ vars.AWS_REGION }}.amazonaws.com
 
           echo "⬇️ Завантажуємо новий образ"
-          docker pull ${{ vars.AWS_ACCAUNT_ID }}.dkr.ecr.${{ vars.AWS_REGION }}.amazonaws.com/backend-rds-book
+          docker pull ${{ vars.AWS_ACCAUNT_ID }}.dkr.ecr.${{ vars.AWS_REGION }}.amazonaws.com/backend-redis-book
 
-          echo "🚀 Запускаємо контейнер backend_rds"
-          docker run -d --name backend_rds -p 8000:8000 \
-            -e DB_HOST=${{ vars.DB_HOST }} \
-            -e DB_PORT=5432 \
-            -e DB_NAME=postgres \
-            -e DB_USER=${{ vars.DB_USER }} \
-            -e DB_PASSWORD=${{ secrets.DB_PASSWORD }} \
-            ${{ vars.AWS_ACCAUNT_ID }}.dkr.ecr.${{ vars.AWS_REGION }}.amazonaws.com/backend-rds-book
+          echo "🛠 Перезапуск сервісу"
+          docker-compose down
+          docker-compose up -d

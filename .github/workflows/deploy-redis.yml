@@ -35,20 +35,14 @@ jobs:
         host: ${{ vars.EC2_HOST }}
         username: ${{ vars.EC2_USER }}
         key: ${{ secrets.SSH_KEY }}
-        script: |
-          echo "🛑 Зупиняємо старий контейнер, якщо є"
-          docker stop backend-redis || true
-          docker rm backend-redis || true
-
+        script:    
           echo "🔐 Логін до ECR"
-          aws ecr get-login-password --region eu-north-1 | \
+          aws ecr get-login-password --region ${{ vars.AWS_REGION }} | \
             docker login --username AWS --password-stdin ${{ vars.AWS_ACCAUNT_ID }}.dkr.ecr.${{ vars.AWS_REGION }}.amazonaws.com
 
           echo "⬇️ Завантажуємо новий образ"
           docker pull ${{ vars.AWS_ACCAUNT_ID }}.dkr.ecr.${{ vars.AWS_REGION }}.amazonaws.com/backend-redis-book
 
-          echo "🚀 Запускаємо контейнер backend-redis"
-          docker run -d --name backend-redis -p 8001:8001 \
-           -e REDIS_HOST=clustercfg.redis-bookstore.uquncs.eun1.cache.amazonaws.com \
-           -e REDIS_PORT=6379 \
-            ${{ vars.AWS_ACCAUNT_ID }}.dkr.ecr.${{ vars.AWS_REGION }}.amazonaws.com/backend-redis-book
+          echo "🛠 Перезапуск сервісу"
+          docker-compose down
+          docker-compose up -d

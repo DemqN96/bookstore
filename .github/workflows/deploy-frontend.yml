@@ -35,12 +35,13 @@ jobs:
         username: ${{ vars.EC2_USER }}
         key: ${{ secrets.SSH_KEY }}
         script: |
-          docker stop frontend || true
-          docker rm frontend || true
-          aws ecr get-login-password --region ${{ vars.AWS_REGION }} | docker login --username AWS --password-stdin ${{ vars.AWS_ACCAUNT_ID }}.dkr.ecr.${{ vars.AWS_REGION }}.amazonaws.com
+          echo "🔐 Логін до ECR"
+          aws ecr get-login-password --region ${{ vars.AWS_REGION }} | \
+            docker login --username AWS --password-stdin ${{ vars.AWS_ACCAUNT_ID }}.dkr.ecr.${{ vars.AWS_REGION }}.amazonaws.com
 
-          docker pull ${{ vars.AWS_ACCAUNT_ID }}.dkr.ecr.${{ vars.AWS_REGION }}.amazonaws.com/frontend-book
-        
-          docker run -d --name frontend --restart unless-stopped -p 80:80 ${{ vars.AWS_ACCAUNT_ID }}.dkr.ecr.${{ vars.AWS_REGION }}.amazonaws.com/frontend-book
+          echo "⬇️ Завантажуємо новий образ"
+          docker pull ${{ vars.AWS_ACCAUNT_ID }}.dkr.ecr.${{ vars.AWS_REGION }}.amazonaws.com/backend-redis-book
 
-    
+          echo "🛠 Перезапуск сервісу"
+          docker-compose down
+          docker-compose up -d
