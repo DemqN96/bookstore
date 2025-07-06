@@ -26,7 +26,7 @@ jobs:
 
     - name: Build and push backend-rds image
       run: |
-        IMAGE=149591431224.dkr.ecr.eu-north-1.amazonaws.com/backend-rds-book
+        IMAGE=${{ vars.AWS_ACCAUNT_ID }}.dkr.ecr.${{ vars.AWS_REGION }}.amazonaws.com/backend-rds-book
         docker build -t $IMAGE ./backend_rds
         docker push $IMAGE
 
@@ -50,16 +50,16 @@ jobs:
           fi
 
           echo "🔐 Логін до ECR"
-          aws ecr get-login-password --region eu-north-1 | docker login --username AWS --password-stdin 149591431224.dkr.ecr.eu-north-1.amazonaws.com
+          aws ecr get-login-password --region ${{ vars.AWS_REGION }} | docker login --username AWS --password-stdin ${{ vars.AWS_ACCAUNT_ID }}.dkr.ecr.${{ vars.AWS_REGION }}.amazonaws.com
 
           echo "⬇️ Завантажуємо новий образ"
-          docker pull 149591431224.dkr.ecr.eu-north-1.amazonaws.com/backend-rds-book
+          docker pull ${{ vars.AWS_ACCAUNT_ID }}.dkr.ecr.${{ vars.AWS_REGION }}.amazonaws.com/backend-rds-book
 
           echo "🚀 Запускаємо контейнер backend_rds"
           docker run -d --name backend_rds -p 8000:8000 \
-            -e DB_HOST=database-bookstore1.c584egy6cwej.eu-north-1.rds.amazonaws.com \
+            -e DB_HOST=${{ vars.DB_HOST }} \
             -e DB_PORT=5432 \
             -e DB_NAME=postgres \
-            -e DB_USER=postgres \
+            -e DB_USER=${{ vars.DB_USER }} \
             -e DB_PASSWORD=${{ secrets.DB_PASSWORD }} \
-            149591431224.dkr.ecr.eu-north-1.amazonaws.com/backend-rds-book
+            ${{ vars.AWS_ACCAUNT_ID }}.dkr.ecr.${{ vars.AWS_REGION }}.amazonaws.com/backend-rds-book

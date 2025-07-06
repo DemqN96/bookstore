@@ -25,7 +25,7 @@ jobs:
 
     - name: Build and push frontend image
       run: |
-        IMAGE=149591431224.dkr.ecr.eu-north-1.amazonaws.com/frontend-book
+        IMAGE=${{ vars.AWS_ACCAUNT_ID }}.dkr.ecr.${{ vars.AWS_REGION }}.amazonaws.com/frontend-book
         docker build -t $IMAGE ./frontend
         docker push $IMAGE
     - name: Deploy to EC2
@@ -37,10 +37,10 @@ jobs:
         script: |
           docker stop frontend || true
           docker rm frontend || true
-          aws ecr get-login-password --region eu-north-1 | docker login --username AWS --password-stdin 149591431224.dkr.ecr.eu-north-1.amazonaws.com
+          aws ecr get-login-password --region ${{ vars.AWS_REGION }} | docker login --username AWS --password-stdin ${{ vars.AWS_ACCAUNT_ID }}.dkr.ecr.${{ vars.AWS_REGION }}.amazonaws.com
 
-          docker pull 149591431224.dkr.ecr.eu-north-1.amazonaws.com/frontend-book
+          docker pull ${{ vars.AWS_ACCAUNT_ID }}.dkr.ecr.${{ vars.AWS_REGION }}.amazonaws.com/frontend-book
         
-          docker run -d --name frontend --restart unless-stopped -p 80:80 149591431224.dkr.ecr.eu-north-1.amazonaws.com/frontend-book
+          docker run -d --name frontend --restart unless-stopped -p 80:80 ${{ vars.AWS_ACCAUNT_ID }}.dkr.ecr.${{ vars.AWS_REGION }}.amazonaws.com/frontend-book
 
     
