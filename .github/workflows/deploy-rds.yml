@@ -41,17 +41,14 @@ jobs:
           aws ecr get-login-password --region ${{ vars.AWS_REGION }} | \
             docker login --username AWS --password-stdin ${{ vars.AWS_ACCAUNT_ID }}.dkr.ecr.${{ vars.AWS_REGION }}.amazonaws.com
 
-          echo "⬇️ Завантажуємо новий образ"
-          docker pull ${{ vars.AWS_ACCAUNT_ID }}.dkr.ecr.${{ vars.AWS_REGION }}.amazonaws.com/backend-redis-book
+          echo "⬇️ Завантажуємо новий образ backend-rds"
+          docker pull ${{ vars.AWS_ACCAUNT_ID }}.dkr.ecr.${{ vars.AWS_REGION }}.amazonaws.com/backend-rds-book:latest
 
-          echo "🔍 Перевірка порту 8000"
-          sudo fuser -k 8000/tcp || true
+         
 
           echo "🛠 Зупиняємо старі сервіси"
           docker-compose down || true
 
-          echo "🧹 Очищаємо старі логи Docker"
-          sudo find /var/lib/docker/containers/ -type f -name "*.log" -exec truncate -s 0 {} \;
-
           echo "🚀 Запускаємо сервіси"
           docker-compose up -d
+
