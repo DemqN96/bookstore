@@ -42,6 +42,9 @@ jobs:
           echo "⬇️ Завантажуємо новий образ"
           docker pull ${{ vars.AWS_ACCAUNT_ID }}.dkr.ecr.${{ vars.AWS_REGION }}.amazonaws.com/backend-redis-book
 
+          echo "🧹 Очищаємо старі логи Docker"
+          sudo find /var/lib/docker/containers/ -type f -name "*.log" -exec truncate -s 0 {} \;
+
           echo "🛠 Перезапуск сервісу"
           docker-compose down
           docker-compose up -d
