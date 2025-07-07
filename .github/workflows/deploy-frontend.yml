@@ -28,6 +28,7 @@ jobs:
         IMAGE=${{ vars.AWS_ACCAUNT_ID }}.dkr.ecr.${{ vars.AWS_REGION }}.amazonaws.com/frontend-book
         docker build -t $IMAGE ./frontend
         docker push $IMAGE
+        
     - name: Deploy to EC2
       uses: appleboy/ssh-action@v1.0.3
       with:
